@@ -1,23 +1,52 @@
-import logo from './logo.svg';
+import { utcToZonedTime } from 'date-fns-tz';
 import './App.css';
 
 function App() {
+
+  const TIMEZONE_MAP = {
+    LOS_ANGELES: 'America/Los_Angeles',
+    KOLKATA: 'Asia/Kolkata',
+    PERTH: 'Australia/Perth',
+    UTC: 'Etc/UTC',
+  }
+
+  const localDate = new Date()
+  const currentDate = new Date(localDate.getFullYear(), localDate.getMonth(), localDate.getDate(), 0, 0, 0)
+
+  const getTimeOfTimezones = () => {
+    const timeList = Object.keys(TIMEZONE_MAP).map((key, index) => {
+      const tz = TIMEZONE_MAP[key]
+      const d = utcToZonedTime(currentDate.toISOString(), tz)
+      return (
+        <tr key={`${tz}-${index}`}>
+          <td>{tz}</td>
+          <td>{d.toLocaleString()}</td>
+        </tr>
+      )
+    })
+    return (
+      <table>
+        <thead>
+          <tr>
+            <th>Timezone</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {timeList}
+        </tbody>
+      </table>
+    )
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <section>
+        Local Date - {localDate.toLocaleString()}
+      </section>
+      <section>
+        {getTimeOfTimezones()}
+      </section>
     </div>
   );
 }
